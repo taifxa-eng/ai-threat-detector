@@ -2,7 +2,7 @@ import asyncio
 import logging
 import random
 from datetime import datetime
-import pytz
+from datetime import datetime
 from typing import List
 
 from sqlalchemy import func
@@ -268,7 +268,7 @@ async def start_data_generation():
                     packets=packets,
                     result=result,
                     score=score,
-                    created_at=datetime.now(pytz.timezone("Asia/Riyadh"))
+                    created_at=datetime.now(datetime.now().astimezone())
                 ))
 
                 db.commit()
@@ -299,7 +299,7 @@ else:
     import asyncio
 import random
 from datetime import datetime
-import pytz
+from datetime import datetime
 
 from sqlalchemy.orm import Session
 from models.base import SessionLocal
@@ -337,7 +337,7 @@ async def start_data_generation():
                 packets=packets,
                 result=result,
                 score=score,
-                created_at=datetime.now(pytz.timezone("Asia/Riyadh"))
+                created_at=datetime.now(datetime.now().astimezone())
             ))
 
             db.commit()
