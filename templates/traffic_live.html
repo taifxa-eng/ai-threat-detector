@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Traffic Live</h2>
+<canvas id="chart"></canvas>
+
+<script>
+let chart;
+
+async function load(){
+
+    const res = await fetch('/api/traffic/summary');
+    const data = await res.json();
+
+    const labels = data.history.map(i =>
+        new Date(i.timestamp).toLocaleTimeString('en-US')
+    );
+
+    const values = data.history.map(i => i.bytes || 0);
+
+    // 🔥 لو فيه رسم قديم نحذفه (مهم جدًا)
+    if(chart){
+        chart.destroy();
+    }
+
+    chart = new Chart(document.getElementById("chart"), {
+        type:"line",
+        data:{
+            labels: labels,
+            datasets:[{
+                data: values,
+                borderColor: "#00d4ff",
+                fill: true
+            }]
+        },
+        options:{
+            scales:{
+                y:{
+                    ticks:{
+                        callback: function(value){
+                            return value.toLocaleString('en-US');
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+load();
+
+// 🔥 تقليل الضغط (كان يسبب 429)
+setInterval(load,15000);
+
+</script>
+
+{% endblock %}

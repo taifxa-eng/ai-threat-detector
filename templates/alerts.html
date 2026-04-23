@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Alerts</h2>
+<div id="alertsFeed"></div>
+
+<script>
+async function load(){
+    const res = await fetch('/api/alerts/live');
+    const data = await res.json();
+
+    const feed = document.getElementById("alertsFeed");
+    feed.innerHTML = "";
+
+    data.alerts.forEach(a=>{
+      feed.innerHTML += `
+<div>
+    <b>${a.behavior}</b><br>
+    ${a.ip} | Score: ${a.score}
+</div>
+`;
+    });
+}
+
+load();
+setInterval(load,15000);
+</script>
+
+{% endblock %}

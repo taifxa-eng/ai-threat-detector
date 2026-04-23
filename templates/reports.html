@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Reports</h2>
+
+<h3 style="color:#00d4ff;">Attack Reports</h3>
+<table border="1" width="100%" style="margin-bottom:20px;">
+<thead>
+<tr>
+<th>ID</th><th>IP</th><th>Behavior</th><th>Packets</th><th>Result</th><th>Score</th><th>Date</th>
+</tr>
+</thead>
+<tbody id="attackTable"></tbody>
+</table>
+
+<h3 style="color:#22c55e;">Network Reports</h3>
+<table border="1" width="100%">
+<thead>
+<tr>
+<th>ID</th><th>IP</th><th>Behavior</th><th>Packets</th><th>Result</th><th>Score</th><th>Date</th>
+</tr>
+</thead>
+<tbody id="networkTable"></tbody>
+</table>
+
+<script>
+async function loadReports(){
+
+    const res = await fetch('/reports/data');
+    const data = await res.json();
+
+    const attack = document.getElementById('attackTable');
+    const network = document.getElementById('networkTable');
+
+    attack.innerHTML = "";
+    network.innerHTML = "";
+
+    data.forEach(a=>{
+
+        // 🔥 تصنيف ذكي قوي (Score + Packets)
+        let finalResult = a.result || "";
+
+        if(!finalResult || finalResult === "SAFE"){
+
+            if(a.score >= 80) finalResult = "MALICIOUS";
+            else if(a.score >= 50) finalResult = "SUSPICIOUS";
+
+            else if(a.packets >= 1000) finalResult = "MALICIOUS";
+            else if(a.packets >= 600) finalResult = "SUSPICIOUS";
+
+            else finalResult = "SAFE";
+        }
+
+        const row = `<tr>
+        <td>${a.id}</td>
+        <td>${a.ip}</td>
+        <td>${a.behavior}</td>
+        <td>${a.packets}</td>
+        <td>${finalResult}</td>
+        <td>${a.score}</td>
+        <td>${new Date(a.createdAt).toLocaleString('en-US')}</td>
+        </tr>`;
+
+        if(finalResult === "MALICIOUS" || finalResult === "SUSPICIOUS"){
+            attack.innerHTML += row;
+        }else{
+            network.innerHTML += row;
+        }
+
+    });
+}
+
+loadReports();
+</script>
+
+{% endblock %}

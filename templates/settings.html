@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Admin Settings</h2>
+
+<div style="background:#111;padding:20px;border-radius:10px;width:300px">
+
+    <h4>Change Username</h4>
+    <input id="username" placeholder="new username"><br><br>
+
+    <h4>Change Password</h4>
+    <input id="password" type="password" placeholder="new password"><br><br>
+
+    <button onclick="save()">Save Changes</button>
+
+</div>
+
+<script>
+async function save(){
+    await fetch('/api/settings',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value
+        })
+    });
+
+    alert("Saved successfully");
+}
+</script>
+
+{% endblock %}

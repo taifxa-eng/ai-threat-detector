@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Traffic Analysis</h2>
+
+<!-- 🔥 المربعات الرئيسية (نحتفظ فيها فقط) -->
+<div id="trafficBoxes" style="display:flex; gap:20px; margin-top:20px;">
+    
+    <div class="card">
+        <h4>Attacks</h4>
+        <h1 id="attackCount">0</h1>
+    </div>
+
+    <div class="card">
+        <h4>Suspicious IPs</h4>
+        <h1 id="suspiciousCount">0</h1>
+    </div>
+
+</div>
+
+<!-- 🔥 قائمة IPs -->
+<h3 style="margin-top:30px;">Suspicious IPs</h3>
+<div id="suspiciousIps"></div>
+
+<!-- 🔥 قائمة الهجمات -->
+<h3 style="margin-top:30px;">Attack Breakdown</h3>
+<div id="trafficList"></div>
+
+{% endblock %}

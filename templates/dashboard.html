@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 style="margin-bottom:20px;">Dashboard</h2>
+
+<!-- 🔥 الكروت -->
+<div style="display:flex; gap:20px; margin-bottom:25px;">
+
+    <div class="card">
+        <h4>Total Traffic</h4>
+        <h1 id="totalTraffic">0</h1>
+    </div>
+
+    <div class="card">
+        <h4>Threats</h4>
+        <h1 id="threatCount">0</h1>
+    </div>
+
+    <div class="card">
+        <h4>Status</h4>
+        <h1 id="systemStatus">OK</h1>
+    </div>
+
+</div>
+
+<!-- 🔥 الرسوم -->
+<div style="display:flex; gap:20px;">
+
+    <div style="flex:2;">
+        <canvas id="trafficChart"></canvas>
+    </div>
+
+    <div style="flex:1;">
+        <canvas id="attackMixChart"></canvas>
+    </div>
+
+</div>
+
+<!-- 🔥 alerts -->
+<h3 style="margin-top:25px;">Live Alerts</h3>
+<div id="alertsFeed"></div>
+
+{% endblock %}

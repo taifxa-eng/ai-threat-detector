@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="soc-wrapper">
+
+    <h2 class="soc-title">SOC Network Analysis Center</h2>
+
+    <!-- STATUS -->
+    <div class="soc-stats">
+        <div class="soc-card-mini">
+            <h4>Live Threats</h4>
+            <p id="liveThreats">0</p>
+        </div>
+
+        <div class="soc-card-mini">
+            <h4>Suspicious</h4>
+            <p id="liveSuspicious">0</p>
+        </div>
+
+        <div class="soc-card-mini">
+            <h4>Safe Events</h4>
+            <p id="liveSafe">0</p>
+        </div>
+    </div>
+
+    <!-- INPUT -->
+    <div class="soc-input">
+        <input id="ip" placeholder="IP Address" />
+        <input id="behavior" placeholder="Behavior (ddos / scan)" />
+        <input id="packets" placeholder="Packets" />
+        <button onclick="manualAnalyze()">Run Test</button>
+    </div>
+
+    <!-- RESULT -->
+    <div id="resultBox"></div>
+
+    <!-- FEED -->
+    <div class="soc-feed" id="feed"></div>
+
+</div>
+
+<script>
+
+let stats = { safe: 0, suspicious: 0, threats: 0 };
+
+// ================= ANALYZE =================
+async function manualAnalyze() {
+    lastResult = `
+<div style="background:#111;padding:10px;border-radius:10px">
+RESULT: ${result} | SCORE: ${score}
+</div>`;
+
+document.getElementById("resultBox").innerHTML = lastResult;
+
+    const ip = document.getElementById("ip").value;
+    const behavior = document.getElementById("behavior").value;
+    const packets = document.getElementById("packets").value;
+
+    const res = await fetch("/analyze-network", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ip, behavior, packets })
+    });
+
+    const data = await res.json();
+
+    const result = data.result || data.status || "SAFE";
+    const score = data.score || 0;
+
+    // 🔥 النتيجة ما تختفي
+    document.getElementById("resultBox").innerHTML = `
+    <div style="background:#111;padding:10px;border-radius:10px;margin-top:10px">
+        RESULT: <b>${result}</b> | SCORE: ${score}
+    </div>`;
+
+    addFeed(ip, behavior, packets, result, score);
+    updateStats(result);
+}
+let lastResult = null;
+
+// ================= FEED =================
+function addFeed(ip, behavior, packets, result, score) {
+
+    const feed = document.getElementById("feed");
+
+    const card = document.createElement("div");
+    card.className = "soc-event";
+
+    let color = "#00d4ff";
+    if (result === "MALICIOUS") color = "#ff3b3b";
+    if (result === "SUSPICIOUS") color = "#ffb100";
+    if (result === "SAFE") color = "#2ecc71";
+
+    card.style.borderLeft = "5px solid " + color;
+
+    card.innerHTML = `
+        <div><b>${ip}</b></div>
+        <div>${behavior} | ${packets}</div>
+        <div style="color:${color}">${result}</div>
+        <div>Score: ${score}</div>
+    `;
+
+    feed.prepend(card);
+}
+
+// ================= STATS =================
+function updateStats(result) {
+    if (result === "SAFE") stats.safe++;
+    else if (result === "SUSPICIOUS") stats.suspicious++;
+    else stats.threats++;
+
+    document.getElementById("liveSafe").innerText = stats.safe;
+    document.getElementById("liveSuspicious").innerText = stats.suspicious;
+    document.getElementById("liveThreats").innerText = stats.threats;
+}
+
+// ================= AUTO =================
+async function autoFeed() {
+
+    const res = await fetch("/api/dashboard/alerts");
+    const json = await res.json();
+
+    const alerts = json.alerts || [];
+
+    document.getElementById("feed").innerHTML = "";
+    stats = { safe: 0, suspicious: 0, threats: 0 };
+
+    alerts.forEach(a => {
+
+        const result = a.result || "SAFE";
+        const score = a.score || 0;
+
+        addFeed(a.ip, a.behavior, a.packets, result, score);
+        updateStats(result);
+    });
+    if (lastResult) {
+    document.getElementById("resultBox").innerHTML = lastResult;
+}
+}
+
+setInterval(autoFeed, 8000);
+autoFeed();
+
+</script>
+
+{% endblock %}

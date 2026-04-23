@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Threat Detector</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+</head>
+
+<body data-page="{{ page|default('dashboard') }}">
+
+<div class="app-shell">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <span>AI</span> Threat <span>Detector</span>
+        </div>
+
+        <nav>
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <a href="/alerts" class="nav-link">Alerts</a>
+            <a href="/traffic" class="nav-link">Traffic Analysis</a>
+            <a href="/network" class="nav-link">Network Analysis</a>
+            <a href="/traffic-live" class="nav-link">Traffic Live</a>
+            <a href="/reports" class="nav-link">Reports</a>
+            <a href="/settings" class="nav-link">Settings</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/logout" class="logout-button">Sign out</a>
+        </div>
+    </aside>
+
+    <main class="content">
+        <header class="topbar">
+            <div class="page-title">{{ page_title|default('AI Threat Detector') }}</div>
+            <div class="user-badge">{{ user.username if user else 'taifxa' }}</div>
+        </header>
+
+        <section class="page-body">
+            {% block content %}{% endblock %}
+        </section>
+    </main>
+
+</div>
+
+<script src="/static/js/auth.js" defer></script>
+<script src="/static/js/dashboard.js" defer></script>
+<script src="/static/js/alerts.js" defer></script>
+<script src="/static/js/traffic.js" defer></script>
+<script src="/static/js/reports.js" defer></script>
+<script src="/static/js/settings.js" defer></script>
+
+</body>
+</html>
